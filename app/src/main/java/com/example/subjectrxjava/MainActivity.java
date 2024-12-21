@@ -2,27 +2,38 @@ package com.example.subjectrxjava;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.jakewharton.rxbinding4.view.RxView;
+import com.jakewharton.rxbinding4.widget.RxTextView;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.AsyncSubject;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.ReplaySubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import kotlin.Unit;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView textView;
+    EditText editText;
+    AppCompatButton button;
     private static final String TAG="myApp";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        button=findViewById(R.id.btnView);
+        textView=findViewById(R.id.txtView);
+        editText=findViewById(R.id.edtView);
         //DemoAsyncSubject();
         //DemoAsyncSubject1();
         //BehaviorSubject();
@@ -41,10 +55,22 @@ public class MainActivity extends AppCompatActivity {
         //PublishSubject();
         //PublishSubject1();
         //ReplaySubject();
-        ReplaySubject1();
+        //ReplaySubject1();
 
+        Disposable disposable= RxTextView.textChanges(editText).subscribe(new Consumer<CharSequence>() {
+            @Override
+            public void accept(CharSequence charSequence) throws Throwable {
+                textView.setText(charSequence);
+            }
+        });
 
-
+        Disposable disposable1= RxView.clicks(button).subscribe(new Consumer<Unit>() {
+            @Override
+            public void accept(Unit unit) throws Throwable {
+                textView.setText("");
+                editText.setText("");
+            }
+        });
     }
 
     public void PublishSubject1() {
